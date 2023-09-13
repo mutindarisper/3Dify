@@ -12,7 +12,8 @@
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "three": "^0.156.1"
+    "three": "^0.156.1",
+    "three-orbitcontrols": "^2.110.3"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",
