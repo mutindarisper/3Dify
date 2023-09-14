@@ -24,7 +24,7 @@ const RotatingGlobe = () => {
     scene.add(globe);
 
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.6)
-scene.add(ambientLight);
+    scene.add(ambientLight);
 
 
 
