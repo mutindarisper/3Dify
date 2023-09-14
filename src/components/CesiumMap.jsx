@@ -18,9 +18,36 @@ const CesiumMap = () => {
 const viewer = new Cesium.Viewer("cesiumContainer");
 
 try {
+  // const imageryLayer = viewer.imageryLayers.addImageryProvider(
+  //    Cesium.IonImageryProvider.fromAssetId(4)
+
+    
+  // );
+
   const imageryLayer = viewer.imageryLayers.addImageryProvider(
-     Cesium.IonImageryProvider.fromAssetId(4)
-  );
+    // new Cesium.WebMapServiceImageryProvider({
+    //     url:'http://localhost:8005/geoserver/Nairobi_data/wms?',
+    //     layers:'Nairobi_data:nai_population',
+    //     parameters:{
+    //         transparent:true,
+    //         opacity:0.5,
+    //         format:"image/png"
+    //     }
+    // }),
+
+    new Cesium.WebMapServiceImageryProvider({
+      url:'http://localhost:8005/geoserver/realtime_air_quality/wms?',
+      layers:'realtime_air_quality:Global_NO2',
+      parameters:{
+          transparent:true,
+          // opacity:0.5,
+          format:"image/png"
+      }
+  })
+
+  
+)
+imageryLayer.alpha = 0.9
    viewer.zoomTo(imageryLayer);
 } catch (error) {
   console.log(error);
