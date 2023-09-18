@@ -4,7 +4,7 @@ import React, {useEffect, useRef} from 'react'
 
 
 
-const CesiumMap = () => {
+const CesiumMap = ({ viewer, content }) => {
 
   let mapviewer = useRef(null)
 
@@ -49,6 +49,30 @@ usa.then(function(dataSource) {
       console.log(entity.properties.STATE_ABBR, 'state abrv')
       // entity.polygon.addEventListener('mouseover', () => console.log(entity.properties.STATE_ABBR))
 
+      const customContent = `<h2>STATE INFO</h2><table border="5";padding="5">
+      <tr>
+          <th>Column 1</th>
+          <th>Column 2</th>
+      </tr>
+      <tr>
+          <td>POPULATION</td>
+          <td>${entity.properties.PERSONS}</td>
+      </tr>
+      <tr>
+          <td>STATE</td>
+          <td>${entity.properties.STATE_ABBR}</td>
+      </tr>
+      <tr>
+          <td>EMPLOYED</td>
+          <td>${entity.properties.EMPLOYED}</td>
+      </tr>
+      <tr>
+          <td>FAMILIES</td>
+          <td>${entity.properties.FAMILIES}</td>
+      </tr>
+  </table>`;
+      // Display the custom info box when the entity is clicked
+    entity.description = customContent;
       
 
 
@@ -81,6 +105,8 @@ if (SelectedObj != null) {
     // credit Ian Walberg, https://groups.google.com/forum/#!topic/cesium-dev/68GDFwLYWYk 21
     
     var valueToReturn= null;
+
+    var population_value = null;
     
     var pickedObject = mapviewer.current.scene.pick(Position);
     console.log(pickedObject, 'pickedobject')
@@ -94,13 +120,20 @@ if (SelectedObj != null) {
     picked = null;
     
     valueToReturn = null;
+
+    population_value = null;
     
     }
     
     else if (pickedObject.id._name !== undefined) {
       
        valueToReturn = pickedObject.id._name ; //works!
+
+       population_value = pickedObject.id._properties._PERSONS._value //works!
+
+
        console.log(valueToReturn, 'names')
+       console.log(population_value, 'pop value')
 
     // if (pickedObject.id._name.Path_Name !== undefined && pickedObject.id._name.danger_rating !== undefined) {
     
@@ -182,6 +215,15 @@ mapviewer.current.camera.flyTo({
 
 const viewer = new Cesium.Viewer("cesiumContainer");
 mapviewer.current = viewer;
+
+
+
+const infoBox = new Cesium.Entity({
+  description: new Cesium.ConstantProperty(content),
+});
+
+ // Add it to the viewer
+ mapviewer.current.selectedEntity = infoBox;
 
 try {
   // const imageryLayer = viewer.imageryLayers.addImageryProvider(
@@ -315,8 +357,14 @@ viewer.dataSources.add(
         // Clean up when the component unmounts
         return () => {
           viewer.destroy();
+
+          if (infoBox) {
+            viewer.selectedEntity = undefined;
+            // infoBox.destroy();
+          }
+
         };
-      }, []); // The empty array [] makes this effect run only on component mount
+      }, [[viewer, content]]); // The empty array [] makes this effect run only on component mount
   return (
          <div id="cesiumContainer" style={{ width: '100%', height: '100vh' }}>
 
