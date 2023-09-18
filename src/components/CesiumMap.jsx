@@ -1,5 +1,6 @@
-import React, {useEffect, useRef} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 // import * as Cesium from "cesium"
+import BarChart from './charts/BarChart'
 
 
 
@@ -7,6 +8,38 @@ import React, {useEffect, useRef} from 'react'
 const CesiumMap = ({ viewer, content }) => {
 
   let mapviewer = useRef(null)
+  let bardata = useRef(null)
+  let baroptions = useRef(null)
+  const [chart_data, setchart_data] = useState(null)
+  const [chart_options, setchart_options] = useState(null)
+  const [family, setfamily] = useState(null)
+  const [employment, setemployment] = useState(null)
+  const [population, setpopulation] = useState(null)
+  let families = useRef(null)
+  let employed = useRef(null)
+  let persons = useRef(null)
+
+
+  
+
+  // Options for the bar chart
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: false
+        // position: 'top',
+      },
+      title: {
+        display: true,
+        // text: 'Land Cover Chart',
+      },
+    },
+  };
+
+  // baroptions.current = options
+  // setchart_options(baroptions.current)
+
 
   //styled usa population data
 
@@ -49,7 +82,20 @@ usa.then(function(dataSource) {
       console.log(entity.properties.STATE_ABBR, 'state abrv')
       // entity.polygon.addEventListener('mouseover', () => console.log(entity.properties.STATE_ABBR))
 
-      const customContent = `<h2>STATE INFO</h2><table border="5";padding="5">
+      //extract some content for chart
+    //  employed.current = entity.properties.EMPLOYED
+    //  console.log( employed.current, 'current employed')
+
+    //  setemployment(entity.properties.EMPLOYED)
+
+    //  families.current = entity.properties.FAMILIES
+    //  setfamily(entity.properties.FAMILIES)
+
+    //  persons.current = entity.properties.PERSONS
+    //  setpopulation(entity.properties.PERSONS)
+
+
+      const customContent = `<h2>STATE INFO</h2><table border="5";padding="5";width="500">
       <tr>
           <th>Column 1</th>
           <th>Column 2</th>
@@ -70,15 +116,61 @@ usa.then(function(dataSource) {
           <td>FAMILIES</td>
           <td>${entity.properties.FAMILIES}</td>
       </tr>
+
+      <tr>
+      <td>POPULATION</td>
+      <td>${entity.properties.PERSONS}</td>
+  </tr>
+  <tr>
+      <td>STATE</td>
+      <td>${entity.properties.STATE_ABBR}</td>
+  </tr>
+  <tr>
+      <td>EMPLOYED</td>
+      <td>${entity.properties.EMPLOYED}</td>
+  </tr>
+  <tr>
+      <td>FAMILIES</td>
+      <td>${entity.properties.FAMILIES}</td>
+  </tr>
   </table>`;
       // Display the custom info box when the entity is clicked
     entity.description = customContent;
+
+
+
+
       
 
 
 
       
     }
+
+    const addStats = () => {
+  
+  
+      // Data for the bar chart
+      const data = {
+        labels: ['EMPLOYED', 'FAMILIES', 'PERSONS'],
+        datasets: [
+          {
+            // label: 'Sales Data',
+            backgroundColor: ['#0cefef', '#b09bff', '#ff8c00'],
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1,
+            hoverBackgroundColor: 'rgba(75, 192, 192, 0.4)',
+            hoverBorderColor: 'rgba(75, 192, 192, 1)',
+            data: [families.current, employed.current, persons.current],
+          },
+        ],
+      };
+      console.log(data.datasets[0].data, 'data array')
+    
+    
+      bardata.current = data
+      setchart_data(bardata.current)
+}
 
     var handlerToolTips = new Cesium.ScreenSpaceEventHandler(mapviewer.current.scene.canvas);
 
@@ -107,6 +199,21 @@ if (SelectedObj != null) {
     var valueToReturn= null;
 
     var population_value = null;
+
+    var population_value = null;
+    var employ_value = null;
+    var family_value = null;
+
+    families.current = family_value
+        employed.current = employ_value
+        persons.current = population_value
+
+
+        setemployment(employed.current)
+   
+        setfamily(families.current) 
+      
+        setpopulation(persons.current)
     
     var pickedObject = mapviewer.current.scene.pick(Position);
     console.log(pickedObject, 'pickedobject')
@@ -122,6 +229,10 @@ if (SelectedObj != null) {
     valueToReturn = null;
 
     population_value = null;
+    employ_value = null;
+    family_value = null;
+
+
     
     }
     
@@ -131,9 +242,38 @@ if (SelectedObj != null) {
 
        population_value = pickedObject.id._properties._PERSONS._value //works!
 
+       employ_value = pickedObject.id._properties._EMPLOYED._value
+        
+
+        family_value = pickedObject.id._properties._FAMILIES._value
+
+
+        
+        families.current = family_value
+        employed.current = employ_value
+        persons.current = population_value
+
+
+        setemployment(employed.current)
+   
+        setfamily(families.current) 
+      
+        setpopulation(persons.current)
+   
+
 
        console.log(valueToReturn, 'names')
-       console.log(population_value, 'pop value')
+      //  console.log(population_value, 'pop value')
+      //  console.log( employ_value, ' employed value')
+      // console.log( family_value, ' families value')
+
+      console.log(persons.current, 'pop value')
+      console.log(  employed.current , ' employed value')
+     console.log(  families.current, ' families value')
+
+     addStats()
+      //  console.log(families.current, 'familiess.current value')
+
 
     // if (pickedObject.id._name.Path_Name !== undefined && pickedObject.id._name.danger_rating !== undefined) {
     
@@ -200,6 +340,8 @@ mapviewer.current.camera.flyTo({
   })
 
 }
+
+
     useEffect(() => {
         // Create a Cesium Viewer
        // const viewer = new Cesium.Viewer('cesiumContainer');
@@ -224,6 +366,9 @@ const infoBox = new Cesium.Entity({
 
  // Add it to the viewer
  mapviewer.current.selectedEntity = infoBox;
+
+
+     
 
 try {
   // const imageryLayer = viewer.imageryLayers.addImageryProvider(
@@ -364,7 +509,7 @@ viewer.dataSources.add(
           }
 
         };
-      }, [[viewer, content]]); // The empty array [] makes this effect run only on component mount
+      }, []); // The empty array [] makes this effect run only on component mount [viewer, content]
   return (
          <div id="cesiumContainer" style={{ width: '100%', height: '100vh' }}>
 
@@ -377,8 +522,28 @@ viewer.dataSources.add(
              borderRadius:'15px', border:'none',
               outline:'none', marginLeft:'10px'}}
 
-              onClick={ addUSAPopulation}
+              onClick={ () => addUSAPopulation() } //addStats()
               >USA 3D Population</button>
+
+              {
+                bardata.current != null ? 
+
+                <div className="add_info" style={{zIndex:103,position:'absolute',
+           top:'65vh', right:"2px", width:'450px', 
+           height:'300px', color:'#fff',
+            backgroundColor:'#9b9797', zIndex:103,
+             borderRadius:'15px', border:'none',
+              outline:'none', marginRight:'10px'}}>
+
+                <BarChart data={chart_data} options={options} /> 
+                {/* data={chart_data} options={chart_options} */}
+
+              </div>
+
+              : ''
+              }
+
+              
          </div>
   )
 }
