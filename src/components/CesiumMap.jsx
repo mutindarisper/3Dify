@@ -15,9 +15,11 @@ const CesiumMap = ({ viewer, content }) => {
   const [family, setfamily] = useState(null)
   const [employment, setemployment] = useState(null)
   const [population, setpopulation] = useState(null)
+  const [stateName, setstateName] = useState(null)
   let families = useRef(null)
   let employed = useRef(null)
   let persons = useRef(null)
+  let state_name = useState(null)
 
 
   
@@ -204,9 +206,10 @@ if (SelectedObj != null) {
     var employ_value = null;
     var family_value = null;
 
-    families.current = family_value
+        families.current = family_value
         employed.current = employ_value
         persons.current = population_value
+        state_name.current = valueToReturn
 
 
         setemployment(employed.current)
@@ -214,6 +217,8 @@ if (SelectedObj != null) {
         setfamily(families.current) 
       
         setpopulation(persons.current)
+
+        setstateName( state_name.current)
     
     var pickedObject = mapviewer.current.scene.pick(Position);
     console.log(pickedObject, 'pickedobject')
@@ -252,6 +257,8 @@ if (SelectedObj != null) {
         families.current = family_value
         employed.current = employ_value
         persons.current = population_value
+        state_name.current = valueToReturn
+
 
 
         setemployment(employed.current)
@@ -259,6 +266,8 @@ if (SelectedObj != null) {
         setfamily(families.current) 
       
         setpopulation(persons.current)
+
+        setstateName(state_name.current)
    
 
 
@@ -525,18 +534,33 @@ viewer.dataSources.add(
               onClick={ () => addUSAPopulation() } //addStats()
               >USA 3D Population</button>
 
+
+
+<button type="button" 
+          style={{ position:'absolute',left:'15vh',
+           top:'5vh', width:'120px', 
+           height:'35px', color:'#fff',
+            backgroundColor:'#9b9797', zIndex:103,
+             borderRadius:'15px', border:'none',
+              outline:'none', marginLeft:'10px'}}
+
+              onClick={ () => addUSAPopulation() } //addStats()
+              >Air Quality </button>
+
               {
                 bardata.current != null ? 
 
                 <div className="add_info" style={{zIndex:103,position:'absolute',
            top:'65vh', right:"2px", width:'450px', 
-           height:'300px', color:'#fff',
-            backgroundColor:'#9b9797', zIndex:103,
+           height:'300px', color:'#242424',
+            backgroundColor:'#fff', zIndex:103,
              borderRadius:'15px', border:'none',
-              outline:'none', marginRight:'10px'}}>
+              outline:'none', marginRight:'10px',}}>
+                
+                <p className="title" >{stateName}</p>
 
                 <BarChart data={chart_data} options={options} /> 
-                {/* data={chart_data} options={chart_options} */}
+                {/* data={chart_data} options={chart_options}  display:'flex', justifyContent:'center' */}
 
               </div>
 
