@@ -23,7 +23,7 @@ const RotatingGlobe = () => {
     const globe = new THREE.Mesh(geometry, material);
     scene.add(globe);
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6)
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7)
     scene.add(ambientLight);
 
 
