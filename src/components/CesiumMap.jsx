@@ -545,7 +545,7 @@ viewer.dataSources.add(
               outline:'none', marginLeft:'10px'}}
 
               onClick={ () => addUSAPopulation() } //addStats()
-              >Air Quality </button>
+              >Air Quality Data </button>
 
               {
                 bardata.current != null ? 
